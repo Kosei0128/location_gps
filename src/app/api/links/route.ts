@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
+import ogs from 'open-graph-scraper'
 
 function generateShortId(length = 17) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -21,9 +22,33 @@ export async function POST(request: Request) {
         const supabase = createAdminClient()
         const shortId = generateShortId()
 
+        let ogTitle = null;
+        let ogDescription = null;
+        let ogImage = null;
+
+        try {
+            const { result } = await ogs({
+                url: targetUrl,
+                fetchOptions: { headers: { 'User-Agent': 'facebookexternalhit/1.1;line-poker/1.0' } }
+            });
+            if (result.success) {
+                ogTitle = result.ogTitle || null;
+                ogDescription = result.ogDescription || null;
+                ogImage = result.ogImage?.[0]?.url || null;
+            }
+        } catch (e) {
+            console.error('Failed to fetch OG tags', e);
+        }
+
         const { data: link, error } = await supabase
             .from('tracking_links')
-            .insert({ target_url: targetUrl, short_id: shortId })
+            .insert({
+                target_url: targetUrl,
+                short_id: shortId,
+                og_title: ogTitle,
+                og_description: ogDescription,
+                og_image: ogImage
+            })
             .select('id, short_id')
             .single()
 

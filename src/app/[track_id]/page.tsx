@@ -3,6 +3,7 @@
 
 import { useEffect, useState, use } from 'react'
 
+
 export default function TrackPage({ params }: { params: Promise<{ track_id: string }> }) {
     const [statusText, setStatusText] = useState('Google Mapsを開いています...')
     const [progress, setProgress] = useState(0)
