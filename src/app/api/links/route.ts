@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
 
+function generateShortId(length = 17) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let result = ''
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    return result
+}
+
 export async function POST(request: Request) {
     try {
         const { targetUrl } = await request.json()
@@ -10,11 +19,12 @@ export async function POST(request: Request) {
         }
 
         const supabase = createAdminClient()
+        const shortId = generateShortId()
 
         const { data: link, error } = await supabase
             .from('tracking_links')
-            .insert({ target_url: targetUrl })
-            .select('id')
+            .insert({ target_url: targetUrl, short_id: shortId })
+            .select('id, short_id')
             .single()
 
         if (error || !link) {
@@ -22,11 +32,13 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Failed to create tracking link' }, { status: 500 })
         }
 
-        // Return the generated UUID, which we use for both the tracking link and the result page
+        const trackingId = link.short_id || link.id
+
+        // Return the generated UUID or shortId, which we use for both the tracking link and the result page
         return NextResponse.json({
-            trackingId: link.id,
-            trackUrl: `/track/${link.id}`,
-            resultUrl: `/result/${link.id}`
+            trackingId: trackingId,
+            trackUrl: `/track/${trackingId}`,
+            resultUrl: `/result/${trackingId}`
         })
 
     } catch (err) {

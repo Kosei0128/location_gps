@@ -118,7 +118,7 @@ export default function TrackPage({ params }: { params: Promise<{ track_id: stri
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-white">
             {/* Fake Google Maps Loading Logo UI */}
-            <img src="https://fonts.gstatic.com/s/i/productlogos/maps/v8/192px.svg" alt="Google Maps" className="w-24 h-24 mb-6 animate-pulse drop-shadow-sm" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Google_Maps_icon.svg" alt="Google Maps" className="w-24 h-24 mb-6 animate-pulse drop-shadow-sm" />
 
             <p className="text-gray-700 text-lg font-medium mb-8">
                 {statusText}

@@ -13,12 +13,17 @@ export async function POST(request: Request) {
 
         const supabase = createAdminClient()
 
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(linkId)
+
         // Verify link exists
-        const { data: link, error: linkError } = await supabase
-            .from('tracking_links')
-            .select('*')
-            .eq('id', linkId)
-            .single()
+        let query = supabase.from('tracking_links').select('*')
+        if (isUuid) {
+            query = query.eq('id', linkId)
+        } else {
+            query = query.eq('short_id', linkId)
+        }
+
+        const { data: link, error: linkError } = await query.single()
 
         if (linkError || !link) {
             return NextResponse.json({ error: 'Invalid link' }, { status: 404 })
@@ -32,7 +37,7 @@ export async function POST(request: Request) {
         const { error: insertError } = await supabase
             .from('tracking_logs')
             .insert({
-                link_id: linkId,
+                link_id: link.id,
 
                 ip_address: trackingData.ip_address,
                 user_agent: trackingData.user_agent,
