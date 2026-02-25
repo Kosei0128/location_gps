@@ -2,7 +2,8 @@
 'use client'
 
 import { useState } from 'react'
-import { LinkIcon, MapPinIcon, GlobeAltIcon, ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline'
+import { LinkIcon, MapPinIcon, GlobeAltIcon, ClipboardDocumentCheckIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
 
 export default function AdminPage() {
     const [targetUrl, setTargetUrl] = useState('')
@@ -44,6 +45,12 @@ export default function AdminPage() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100">
                 <div className="bg-blue-600 p-6 text-white text-center">
+                    <div className="flex justify-end mb-2">
+                        <Link href="/help" className="text-blue-200 hover:text-white flex items-center text-sm font-medium transition-colors">
+                            <QuestionMarkCircleIcon className="w-5 h-5 mr-1" />
+                            使い方・解説
+                        </Link>
+                    </div>
                     <GlobeAltIcon className="w-12 h-12 mx-auto mb-2 text-blue-200" />
                     <h1 className="text-2xl font-bold tracking-tight">GeoTrack ツール管理画面</h1>
                     <p className="text-blue-200 text-sm mt-1">トラップリンクの生成・管理を行います</p>
