@@ -143,7 +143,10 @@ export default function TrackPage({ params }: { params: Promise<{ track_id: stri
                             </div>
                             <span className="text-sm font-semibold text-gray-700">私はロボットではありません</span>
                         </div>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Google_Maps_Icon_%282020%29.svg" alt="reCAPTCHA" className="w-8 h-8 opacity-50 grayscale" />
+                        <div className="flex flex-col items-center justify-center ml-4">
+                            <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" className="w-8 h-8" />
+                            <span className="text-[10px] text-gray-500 mt-1 font-sans">reCAPTCHA</span>
+                        </div>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center space-y-4 py-4">
