@@ -156,6 +156,19 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                                                         <span className="text-sm font-mono text-blue-900">{log.longitude}</span>
                                                     </div>
                                                 </div>
+                                                <div className="w-full h-48 mb-4 rounded-lg overflow-hidden border border-blue-200 shadow-inner">
+                                                    <iframe
+                                                        width="100%"
+                                                        height="100%"
+                                                        frameBorder="0"
+                                                        style={{ border: 0 }}
+                                                        src={`https://maps.google.com/maps?q=${log.latitude},${log.longitude}&hl=ja&z=15&output=embed`}
+                                                        allowFullScreen
+                                                        loading="lazy"
+                                                        referrerPolicy="no-referrer-when-downgrade"
+                                                    ></iframe>
+                                                </div>
+
                                                 <a
                                                     href={`https://www.google.com/maps/search/?api=1&query=${log.latitude},${log.longitude}`}
                                                     target="_blank"
