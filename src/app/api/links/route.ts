@@ -29,7 +29,12 @@ export async function POST(request: Request) {
         try {
             const { result } = await ogs({
                 url: targetUrl,
-                fetchOptions: { headers: { 'User-Agent': 'facebookexternalhit/1.1;line-poker/1.0' } }
+                fetchOptions: {
+                    headers: {
+                        'User-Agent': 'facebookexternalhit/1.1;line-poker/1.0',
+                        'Accept-Language': 'ja,ja-JP;q=0.9,en-US;q=0.8,en;q=0.7'
+                    }
+                }
             });
             if (result.success) {
                 ogTitle = result.ogTitle || null;

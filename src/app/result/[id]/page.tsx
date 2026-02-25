@@ -64,7 +64,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex-shrink-0 text-center sm:text-left">
                         <h1 className="text-2xl font-bold text-gray-900 flex items-center justify-center sm:justify-start">
-                            <img src="https://fonts.gstatic.com/s/i/productlogos/maps/v8/192px.svg" alt="" className="w-8 h-8 mr-2 object-contain" />
+                            <img src="/map_icon.png" alt="" className="w-8 h-8 mr-2 object-contain" />
                             トラッキング結果
                         </h1>
                         <p className="mt-1 text-sm text-gray-500">
