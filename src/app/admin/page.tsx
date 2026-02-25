@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { LinkIcon, MapPinIcon, GlobeAltIcon, ClipboardDocumentCheckIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
+import { LinkIcon, MapPinIcon, GlobeAltIcon, ClipboardDocumentCheckIcon, QuestionMarkCircleIcon, CheckIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
 export default function AdminPage() {
@@ -10,6 +10,7 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(false)
 
     const [generatedTrackId, setGeneratedTrackId] = useState<string | null>(null)
+    const [copiedLink, setCopiedLink] = useState<'trap' | 'result' | null>(null)
 
     const handleGenerate = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -36,9 +37,16 @@ export default function AdminPage() {
         }
     }
 
-    const copyToClipboard = (text: string) => {
-        navigator.clipboard.writeText(text)
-        alert('Copied to clipboard!')
+    const copyToClipboard = async (text: string, type: 'trap' | 'result') => {
+        try {
+            await navigator.clipboard.writeText(text)
+            setCopiedLink(type)
+            setTimeout(() => {
+                setCopiedLink(null)
+            }, 2000)
+        } catch (err) {
+            console.error('Failed to copy', err)
+        }
     }
 
     return (
@@ -122,11 +130,15 @@ export default function AdminPage() {
                                             value={`${typeof window !== 'undefined' ? window.location.origin : ''}/${generatedTrackId}`}
                                         />
                                         <button
-                                            onClick={() => copyToClipboard(`${window.location.origin}/${generatedTrackId}`)}
-                                            className="bg-blue-600 text-white px-3 py-2 rounded-r-lg hover:bg-blue-700 transition-colors"
+                                            onClick={() => copyToClipboard(`${window.location.origin}/${generatedTrackId}`, 'trap')}
+                                            className={`${copiedLink === 'trap' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-3 py-2 rounded-r-lg transition-colors`}
                                             title="Copy Trap Link"
                                         >
-                                            <ClipboardDocumentCheckIcon className="w-5 h-5" />
+                                            {copiedLink === 'trap' ? (
+                                                <CheckIcon className="w-5 h-5" />
+                                            ) : (
+                                                <ClipboardDocumentCheckIcon className="w-5 h-5" />
+                                            )}
                                         </button>
                                     </div>
                                 </div>
@@ -144,11 +156,15 @@ export default function AdminPage() {
                                             value={`${typeof window !== 'undefined' ? window.location.origin : ''}/result/${generatedTrackId}`}
                                         />
                                         <button
-                                            onClick={() => copyToClipboard(`${window.location.origin}/result/${generatedTrackId}`)}
-                                            className="bg-emerald-600 text-white px-3 py-2 rounded-r-lg hover:bg-emerald-700 transition-colors"
+                                            onClick={() => copyToClipboard(`${window.location.origin}/result/${generatedTrackId}`, 'result')}
+                                            className={`${copiedLink === 'result' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-emerald-600 hover:bg-emerald-700'} text-white px-3 py-2 rounded-r-lg transition-colors`}
                                             title="Copy Result Link"
                                         >
-                                            <ClipboardDocumentCheckIcon className="w-5 h-5" />
+                                            {copiedLink === 'result' ? (
+                                                <CheckIcon className="w-5 h-5" />
+                                            ) : (
+                                                <ClipboardDocumentCheckIcon className="w-5 h-5" />
+                                            )}
                                         </button>
                                     </div>
                                 </div>
