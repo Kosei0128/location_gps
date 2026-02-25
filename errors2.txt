@@ -1,0 +1,2 @@
+src/app/api/track/route.ts(28,28): error TS2351: This expression is not constructable.
+  Type 'typeof UAParser' has no construct signatures.
